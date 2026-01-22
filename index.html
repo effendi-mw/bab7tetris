@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris Kosakata Mandarin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f1f1f1;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a1c4fd;
+            margin-bottom: 20px;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+        
+        .left-panel, .right-panel {
+            background-color: rgba(30, 30, 46, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-board {
+            width: 300px;
+            height: 600px;
+            background-color: #0f3460;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        .panel-title {
+            font-size: 1.4rem;
+            color: #64b5f6;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3949ab;
+        }
+        
+        .score-display {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            color: #4fc3f7;
+            margin: 15px 0;
+            background-color: rgba(25, 25, 35, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: rgba(40, 40, 60, 0.5);
+            border-radius: 6px;
+        }
+        
+        .info-label {
+            color: #bbdefb;
+        }
+        
+        .info-value {
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        .vocab-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .vocab-item {
+            background-color: rgba(50, 50, 80, 0.6);
+            padding: 10px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+        
+        .vocab-item:hover {
+            transform: translateY(-3px);
+            background-color: rgba(60, 60, 100, 0.8);
+        }
+        
+        .chinese {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .pinyin {
+            color: #ffcc80;
+            font-size: 0.9rem;
+        }
+        
+        .meaning {
+            color: #a5d6a7;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(40, 40, 60, 0.6);
+            border-radius: 8px;
+        }
+        
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .next-blocks {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .next-block-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .next-block {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(30, 30, 50, 0.8);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 2px solid #3949ab;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 8px;
+        }
+        
+        .game-over h2 {
+            font-size: 3rem;
+            color: #ff5252;
+            margin-bottom: 20px;
+        }
+        
+        .game-over p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #bbdefb;
+        }
+        
+        .sentence-display {
+            background-color: rgba(30, 30, 46, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sentence-title {
+            color: #ffcc80;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .sentence {
+            font-size: 1.8rem;
+            text-align: center;
+            margin: 15px 0;
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .sentence-word {
+            background-color: rgba(76, 175, 80, 0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #4caf50;
+        }
+        
+        .sentence-meaning {
+            color: #a5d6a7;
+            font-size: 1.1rem;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #90a4ae;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        @media (max-width: 900px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .left-panel, .right-panel {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .vocab-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .vocab-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>汉字俄罗斯方块</h1>
+        <p class="subtitle">Game Tetris dengan Kosakata Mandarin - Gabungkan blok untuk membentuk kalimat!</p>
+    </div>
+    
+    <div class="game-container">
+        <div class="left-panel">
+            <div class="panel-title">Informasi Permainan</div>
+            <div class="score-display">Skor: <span id="score">0</span></div>
+            
+            <div class="info-row">
+                <div class="info-label">Level</div>
+                <div class="info-value" id="level">1</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Baris Dihapus</div>
+                <div class="info-value" id="lines">0</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Kalimat Terbentuk</div>
+                <div class="info-value" id="sentences">0</div>
+            </div>
+            
+            <div class="panel-title" style="margin-top: 20px;">Kosakata</div>
+            <div class="vocab-list" id="vocab-list">
+                <!-- Kosakata akan diisi oleh JavaScript -->
+            </div>
+        </div>
+        
+        <div class="game-board">
+            <canvas id="tetris" width="300" height="600"></canvas>
+            <div class="game-over" id="gameOver">
+                <h2>GAME OVER</h2>
+                <p id="finalScore">Skor akhir: 0</p>
+                <button id="restartButton">Main Lagi</button>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="panel-title">Kontrol & Info</div>
+            
+            <div class="controls">
+                <div class="control-item">
+                    <span>← →</span>
+                    <span>Gerak kiri/kanan</span>
+                </div>
+                <div class="control-item">
+                    <span>↑</span>
+                    <span>Putar blok</span>
+                </div>
+                <div class="control-item">
+                    <span>↓</span>
+                    <span>Jatuhkan lebih cepat</span>
+                </div>
+                <div class="control-item">
+                    <span>Spasi</span>
+                    <span>Jatuhkan instan</span>
+                </div>
+                <div class="control-item">
+                    <span>C</span>
+                    <span>Simpan blok (hold)</span>
+                </div>
+                <div class="control-item">
+                    <span>P</span>
+                    <span>Jeda permainan</span>
+                </div>
+            </div>
+            
+            <div class="next-blocks">
+                <div class="panel-title">Blok Berikutnya</div>
+                <div class="next-block-container">
+                    <div class="next-block" id="nextBlock1"></div>
+                    <div class="next-block" id="nextBlock2"></div>
+                    <div class="next-block" id="nextBlock3"></div>
+                </div>
+            </div>
+            
+            <div class="next-blocks">
+                <div class="panel-title">Blok Disimpan</div>
+                <div class="next-block-container">
+                    <div class="next-block" id="holdBlock"></div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button id="pauseButton">Jeda</button>
+                <button id="hintButton">Petunjuk</button>
+                <button id="soundButton">Suara: ON</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sentence-display">
+        <div class="panel-title">Kalimat Terbentuk</div>
+        <div class="sentence" id="sentenceDisplay">
+            <span class="sentence-word">-</span>
+        </div>
+        <div class="sentence-meaning" id="sentenceMeaning">
+            Kosakata yang membentuk baris lengkap akan muncul di sini
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Game Tetris dengan Kosakata Mandarin - Latih refleks sambil belajar bahasa Mandarin!</p>
+        <p>Gabungkan blok-blok kosakata untuk membentuk kalimat dan dapatkan bonus poin.</p>
+    </div>
+
+    <script>
+        // Data kosakata Mandarin
+        const vocabulary = [
+            { chinese: "合唱", pinyin: "hé chàng", meaning: "paduan suara", color: "#FF5252" },
+            { chinese: "团", pinyin: "tuán", meaning: "kelompok", color: "#FF9800" },
+            { chinese: "比赛", pinyin: "bǐ sài", meaning: "kompetisi", color: "#FFEB3B" },
+            { chinese: "开始", pinyin: "kāi shǐ", meaning: "mulai", color: "#4CAF50" },
+            { chinese: "第", pinyin: "dì", meaning: "nomor urut", color: "#2196F3" },
+            { chinese: "出场", pinyin: "chū chǎng", meaning: "tampil", color: "#9C27B0" },
+            { chinese: "年级", pinyin: "nián jí", meaning: "tingkatan kelas", color: "#00BCD4" },
+            { chinese: "参加", pinyin: "cān jiā", meaning: "berpartisipasi", color: "#8BC34A" },
+            { chinese: "男", pinyin: "nán", meaning: "laki-laki", color: "#3F51B5" },
+            { chinese: "女", pinyin: "nǚ", meaning: "perempuan", color: "#E91E63" },
+            { chinese: "上台", pinyin: "shàng tái", meaning: "naik panggung", color: "#009688" },
+            { chinese: "得", pinyin: "dé", meaning: "mendapatkan", color: "#CDDC39" },
+            { chinese: "希望", pinyin: "xī wàng", meaning: "harapan", color: "#FF5722" },
+            { chinese: "赢", pinyin: "yíng", meaning: "menang", color: "#673AB7" }
+        ];
+        
+        // Bentuk-bentuk blok Tetris (tetromino)
+        const shapes = [
+            { shape: [[1, 1, 1, 1]], color: "#FF5252", name: "I" }, // I
+            { shape: [[1, 1], [1, 1]], color: "#FF9800", name: "O" }, // O
+            { shape: [[0, 1, 0], [1, 1, 1]], color: "#2196F3", name: "T" }, // T
+            { shape: [[1, 1, 0], [0, 1, 1]], color: "#4CAF50", name: "Z" }, // Z
+            { shape: [[0, 1, 1], [1, 1, 0]], color: "#9C27B0", name: "S" }, // S
+            { shape: [[1, 0, 0], [1, 1, 1]], color: "#FFEB3B", name: "J" }, // J
+            { shape: [[0, 0, 1], [1, 1, 1]], color: "#00BCD4", name: "L" }  // L
+        ];
+        
+        // Konstanta game
+        const COLS = 10;
+        const ROWS = 20;
+        const BLOCK_SIZE = 30;
+        
+        // Variabel game
+        let canvas, ctx;
+        let board = [];
+        let currentPiece, nextPieces = [], holdPiece = null;
+        let score = 0, level = 1, lines = 0, sentences = 0;
+        let gameOver = false, paused = false, canHold = true;
+        let dropCounter = 0, dropInterval = 1000;
+        let lastTime = 0;
+        let currentSentence = [];
+        let soundOn = true;
+        
+        // Inisialisasi papan permainan
+        function createBoard() {
+            board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+        }
+        
+        // Membuat potongan baru dengan kosakata acak
+        function createPiece(shapeIndex = Math.floor(Math.random() * shapes.length)) {
+            const shape = shapes[shapeIndex];
+            const vocabIndex = Math.floor(Math.random() * vocabulary.length);
+            const vocab = vocabulary[vocabIndex];
+            
+            return {
+                shape: shape.shape,
+                color: vocab.color,
+                vocab: vocab,
+                x: Math.floor(COLS / 2) - Math.floor(shape.shape[0].length / 2),
+                y: 0
+            };
+        }
+        
+        // Menggambar blok di papan
+        function drawBlock(x, y, color, vocab = null) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            
+            // Border
+            ctx.strokeStyle = "#FFF";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            
+            // Jika ada kosakata, tambahkan teks
+            if (vocab) {
+                ctx.fillStyle = "#FFF";
+                ctx.font = "bold 14px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(vocab.chinese, x * BLOCK_SIZE + BLOCK_SIZE/2, y * BLOCK_SIZE + BLOCK_SIZE/2);
+            }
+        }
+        
+        // Menggambar papan permainan
+        function drawBoard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Gambar latar belakang papan
+            ctx.fillStyle = "#0f3460";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Gambar grid
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+            ctx.lineWidth = 0.5;
+            for (let y = 0; y < ROWS; y++) {
+                for (let x = 0; x < COLS; x++) {
+                    ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                }
+            }
+            
+            // Gambar blok yang sudah menetap
+            for (let y = 0; y < ROWS; y++) {
+                for (let x = 0; x < COLS; x++) {
+                    if (board[y][x]) {
+                        drawBlock(x, y, board[y][x].color, board[y][x].vocab);
+                    }
+                }
+            }
+            
+            // Gambar potongan saat ini
+            if (currentPiece) {
+                for (let y = 0; y < currentPiece.shape.length; y++) {
+                    for (let x = 0; x < currentPiece.shape[y].length; x++) {
+                        if (currentPiece.shape[y][x]) {
+                            drawBlock(
+                                currentPiece.x + x, 
+                                currentPiece.y + y, 
+                                currentPiece.color, 
+                                currentPiece.vocab
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Cek tabrakan
+        function collide(piece, board, dx = 0, dy = 0) {
+            for (let y = 0; y < piece.shape.length; y++) {
+                for (let x = 0; x < piece.shape[y].length; x++) {
+                    if (piece.shape[y][x] &&
+                        (board[piece.y + y + dy] &&
+                         board[piece.y + y + dy][piece.x + x + dx]) !== 0) {
+                        return true;
+                    }
+                    
+                    // Cek batas kiri/kanan
+                    if (piece.shape[y][x] && 
+                        (piece.x + x + dx < 0 || piece.x + x + dx >= COLS)) {
+                        return true;
+                    }
+                    
+                    // Cek batas bawah
+                    if (piece.shape[y][x] && piece.y + y + dy >= ROWS) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        
+        // Memutar potongan
+        function rotatePiece(piece) {
+            // Buat salinan potongan
+            let rotated = JSON.parse(JSON.stringify(piece));
+            
+            // Transpose matriks
+            let newShape = [];
+            for (let y = 0; y < rotated.shape[0].length; y++) {
+                newShape[y] = [];
+                for (let x = 0; x < rotated.shape.length; x++) {
+                    newShape[y][x] = rotated.shape[rotated.shape.length - 1 - x][y];
+                }
+            }
+            
+            rotated.shape = newShape;
+            
+            // Jika tidak bertabrakan, kembalikan potongan yang diputar
+            if (!collide(rotated, board)) {
+                return rotated;
+            }
+            
+            // Coba geser ke kiri/kanan untuk menghindari tabrakan
+            for (let i = 1; i <= 2; i++) {
+                rotated.x = piece.x + i;
+                if (!collide(rotated, board)) return rotated;
+                
+                rotated.x = piece.x - i;
+                if (!collide(rotated, board)) return rotated;
+                
+                rotated.x = piece.x; // Reset
+            }
+            
+            // Jika tetap tidak bisa, kembalikan aslinya
+            return piece;
+        }
+        
+        // Gabungkan potongan ke papan
+        function mergePiece() {
+            for (let y = 0; y < currentPiece.shape.length; y++) {
+                for (let x = 0; x < currentPiece.shape[y].length; x++) {
+                    if (currentPiece.shape[y][x]) {
+                        // Pastikan tidak melebihi batas atas
+                        if (currentPiece.y + y >= 0) {
+                            board[currentPiece.y + y][currentPiece.x + x] = {
+                                color: currentPiece.color,
+                                vocab: currentPiece.vocab
+                            };
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Hapus baris yang penuh
+        function sweepRows() {
+            let rowsCleared = 0;
+            let clearedRowIndices = [];
+            
+            for (let y = ROWS - 1; y >= 0; y--) {
+                if (board[y].every(cell => cell !== 0)) {
+                    // Kumpulkan kosakata dari baris ini
+                    let rowVocab = [];
+                    for (let x = 0; x < COLS; x++) {
+                        if (board[y][x] && board[y][x].vocab) {
+                            rowVocab.push(board[y][x].vocab);
+                        }
+                    }
+                    
+                    // Tambahkan ke kalimat saat ini
+                    currentSentence = currentSentence.concat(rowVocab);
+                    
+                    // Hapus baris
+                    board.splice(y, 1);
+                    board.unshift(Array(COLS).fill(0));
+                    
+                    rowsCleared++;
+                    clearedRowIndices.push(y);
+                    y++; // Periksa baris yang sama lagi karena baris di atas turun
+                }
+            }
+            
+            if (rowsCleared > 0) {
+                // Update statistik
+                lines += rowsCleared;
+                document.getElementById("lines").textContent = lines;
+                
+                // Hitung skor
+                let lineScore = 0;
+                switch (rowsCleared) {
+                    case 1: lineScore = 100; break;
+                    case 2: lineScore = 300; break;
+                    case 3: lineScore = 500; break;
+                    case 4: lineScore = 800; break;
+                }
+                
+                // Bonus level
+                lineScore *= level;
+                
+                // Tambahkan skor
+                score += lineScore;
+                document.getElementById("score").textContent = score;
+                
+                // Update level setiap 10 baris
+                level = Math.floor(lines / 10) + 1;
+                document.getElementById("level").textContent = level;
+                
+                // Update interval jatuh
+                dropInterval = Math.max(100, 1000 - (level - 1) * 100);
+                
+                // Cek apakah kalimat terbentuk
+                checkSentence();
+                
+                // Putar suara jika ada
+                if (soundOn) {
+                    playClearSound(rowsCleared);
+                }
+            }
+            
+            return rowsCleared;
+        }
+        
+        // Cek apakah kalimat terbentuk dari kosakata yang terkumpul
+        function checkSentence() {
+            if (currentSentence.length >= 3) {
+                // Coba buat kalimat dari kosakata yang tersedia
+                let sentence = "";
+                let meaning = "";
+                
+                // Untuk demo, kita akan buat kalimat acak dari kombinasi kosakata
+                const sentenceTemplates = [
+                    { template: "第 年级 参加 合唱 比赛", meaning: "Kelas ... mengikuti kompetisi paduan suara" },
+                    { template: "男 女 上台 合唱", meaning: "Laki-laki dan perempuan naik panggung untuk paduan suara" },
+                    { template: "开始 比赛 希望 赢", meaning: "Kompetisi dimulai, berharap untuk menang" },
+                    { template: "出场 得 奖 希望", meaning: "Tampil mendapatkan hadiah, semoga..." },
+                    { template: "参加 比赛 得 赢", meaning: "Mengikuti kompetisi mendapatkan kemenangan" },
+                    { template: "第 一 年级 开始 合唱", meaning: "Kelas satu memulai paduan suara" }
+                ];
+                
+                // Pilih template acak
+                const template = sentenceTemplates[Math.floor(Math.random() * sentenceTemplates.length)];
+                sentence = template.template;
+                meaning = template.meaning;
+                
+                // Tampilkan kalimat
+                displaySentence(sentence, meaning);
+                
+                // Reset kalimat saat ini
+                currentSentence = [];
+                
+                // Tambahkan poin bonus
+                score += 500 * level;
+                document.getElementById("score").textContent = score;
+                
+                sentences++;
+                document.getElementById("sentences").textContent = sentences;
+                
+                // Putar suara jika ada
+                if (soundOn) {
+                    playSentenceSound();
+                }
+            }
+        }
+        
+        // Tampilkan kalimat yang terbentuk
+        function displaySentence(sentence, meaning) {
+            const sentenceDisplay = document.getElementById("sentenceDisplay");
+            const sentenceMeaning = document.getElementById("sentenceMeaning");
+            
+            // Kosongkan display
+            sentenceDisplay.innerHTML = "";
+            
+            // Pisahkan kata-kata dan tampilkan
+            const words = sentence.split(" ");
+            words.forEach(word => {
+                const wordSpan = document.createElement("span");
+                wordSpan.className = "sentence-word";
+                wordSpan.textContent = word;
+                sentenceDisplay.appendChild(wordSpan);
+            });
+            
+            // Tampilkan arti
+            sentenceMeaning.textContent = meaning;
+            
+            // Tambahkan animasi
+            sentenceDisplay.style.animation = "none";
+            setTimeout(() => {
+                sentenceDisplay.style.animation = "fadeIn 0.5s";
+            }, 10);
+        }
+        
+        // Fungsi suara sederhana (menggunakan Web Audio API)
+        function playClearSound(lines) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Frekuensi berbeda berdasarkan jumlah baris
+                let frequency = 440;
+                if (lines === 2) frequency = 523.25;
+                if (lines === 3) frequency = 659.25;
+                if (lines === 4) frequency = 783.99;
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log("Audio tidak didukung");
+            }
+        }
+        
+        function playSentenceSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Mainkan beberapa not untuk kalimat
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(440 + i * 100, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                        
+                        oscillator.start();
+                        oscillator.stop(audioContext.currentTime + 0.1);
+                    }, i * 100);
+                }
+            } catch (e) {
+                console.log("Audio tidak didukung");
+            }
+        }
+        
+        // Update tampilan blok berikutnya
+        function updateNextBlocks() {
+            // Pastikan kita selalu memiliki 3 blok berikutnya
+            while (nextPieces.length < 3) {
+                nextPieces.push(createPiece());
+            }
+            
+            // Update tampilan
+            for (let i = 0; i < 3; i++) {
+                const blockEl = document.getElementById(`nextBlock${i+1}`);
+                if (blockEl && nextPieces[i]) {
+                    blockEl.style.backgroundColor = nextPieces[i].color;
+                    blockEl.textContent = nextPieces[i].vocab.chinese;
+                }
+            }
+            
+            // Update blok yang disimpan
+            const holdBlockEl = document.getElementById("holdBlock");
+            if (holdBlockEl) {
+                if (holdPiece) {
+                    holdBlockEl.style.backgroundColor = holdPiece.color;
+                    holdBlockEl.textContent = holdPiece.vocab.chinese;
+                } else {
+                    holdBlockEl.style.backgroundColor = "rgba(30, 30, 50, 0.8)";
+                    holdBlockEl.textContent = "";
+                }
+            }
+        }
+        
+        // Ambil blok berikutnya
+        function getNextPiece() {
+            if (nextPieces.length === 0) {
+                // Inisialisasi jika belum ada
+                for (let i = 0; i < 3; i++) {
+                    nextPieces.push(createPiece());
+                }
+            }
+            
+            const piece = nextPieces.shift();
+            nextPieces.push(createPiece());
+            updateNextBlocks();
+            return piece;
+        }
+        
+        // Simpan blok saat ini (hold)
+        function holdCurrentPiece() {
+            if (!canHold) return;
+            
+            if (holdPiece) {
+                // Tukar blok yang disimpan dengan blok saat ini
+                const temp = holdPiece;
+                holdPiece = currentPiece;
+                currentPiece = temp;
+                currentPiece.x = Math.floor(COLS / 2) - Math.floor(currentPiece.shape[0].length / 2);
+                currentPiece.y = 0;
+            } else {
+                // Simpan blok saat ini dan ambil yang baru
+                holdPiece = currentPiece;
+                currentPiece = getNextPiece();
+            }
+            
+            canHold = false;
+            updateNextBlocks();
+        }
+        
+        // Update game
+        function update(time = 0) {
+            if (gameOver || paused) return;
+            
+            const deltaTime = time - lastTime;
+            lastTime = time;
+            
+            dropCounter += deltaTime;
+            if (dropCounter > dropInterval) {
+                dropPiece();
+                dropCounter = 0;
+            }
+            
+            drawBoard();
+            requestAnimationFrame(update);
+        }
+        
+        // Jatuhkan potongan satu baris
+        function dropPiece() {
+            if (!currentPiece) return;
+            
+            currentPiece.y++;
+            if (collide(currentPiece, board, 0, 1)) {
+                currentPiece.y--;
+                mergePiece();
+                sweepRows();
+                currentPiece = getNextPiece();
+                canHold = true;
+                
+                // Cek game over
+                if (collide(currentPiece, board)) {
+                    gameOver = true;
+                    document.getElementById("gameOver").style.display = "flex";
+                    document.getElementById("finalScore").textContent = `Skor akhir: ${score}`;
+                }
+            }
+        }
+        
+        // Jatuhkan instan
+        function hardDrop() {
+            if (!currentPiece) return;
+            
+            while (!collide(currentPiece, board, 0, 1)) {
+                currentPiece.y++;
+            }
+            
+            currentPiece.y--;
+            mergePiece();
+            sweepRows();
+            currentPiece = getNextPiece();
+            canHold = true;
+            
+            // Cek game over
+            if (collide(currentPiece, board)) {
+                gameOver = true;
+                document.getElementById("gameOver").style.display = "flex";
+                document.getElementById("finalScore").textContent = `Skor akhir: ${score}`;
+            }
+        }
+        
+        // Pindahkan potongan kiri/kanan
+        function movePiece(dx) {
+            if (!currentPiece) return;
+            
+            currentPiece.x += dx;
+            if (collide(currentPiece, board, 0, 0)) {
+                currentPiece.x -= dx;
+            }
+        }
+        
+        // Inisialisasi game
+        function init() {
+            canvas = document.getElementById("tetris");
+            ctx = canvas.getContext("2d");
+            
+            createBoard();
+            currentPiece = getNextPiece();
+            updateNextBlocks();
+            
+            // Tampilkan kosakata
+            const vocabList = document.getElementById("vocab-list");
+            vocabulary.forEach(vocab => {
+                const vocabItem = document.createElement("div");
+                vocabItem.className = "vocab-item";
+                vocabItem.innerHTML = `
+                    <div class="chinese">${vocab.chinese}</div>
+                    <div class="pinyin">${vocab.pinyin}</div>
+                    <div class="meaning">${vocab.meaning}</div>
+                `;
+                vocabList.appendChild(vocabItem);
+            });
+            
+            // Tampilkan kalimat awal
+            displaySentence("合唱 比赛 开始", "Kompetisi paduan suara dimulai");
+            
+            // Setup event listeners
+            document.addEventListener("keydown", event => {
+                if (gameOver) return;
+                
+                switch (event.keyCode) {
+                    case 37: // Kiri
+                        movePiece(-1);
+                        break;
+                    case 39: // Kanan
+                        movePiece(1);
+                        break;
+                    case 40: // Bawah
+                        dropPiece();
+                        score += 1;
+                        document.getElementById("score").textContent = score;
+                        break;
+                    case 38: // Atas
+                        currentPiece = rotatePiece(currentPiece);
+                        break;
+                    case 32: // Spasi
+                        hardDrop();
+                        break;
+                    case 67: // C
+                        holdCurrentPiece();
+                        break;
+                    case 80: // P
+                        togglePause();
+                        break;
+                }
+            });
+            
+            // Setup tombol kontrol
+            document.getElementById("pauseButton").addEventListener("click", togglePause);
+            document.getElementById("hintButton").addEventListener("click", showHint);
+            document.getElementById("soundButton").addEventListener("click", toggleSound);
+            document.getElementById("restartButton").addEventListener("click", restartGame);
+            
+            // Mulai game loop
+            requestAnimationFrame(update);
+        }
+        
+        // Fungsi bantuan
+        function togglePause() {
+            paused = !paused;
+            document.getElementById("pauseButton").textContent = paused ? "Lanjutkan" : "Jeda";
+            
+            if (!paused) {
+                lastTime = performance.now();
+                requestAnimationFrame(update);
+            }
+        }
+        
+        function showHint() {
+            alert("Tips: Coba susun blok secara horizontal untuk membentuk baris lengkap. Baris yang mengandung kosakata akan membentuk kalimat dan memberikan bonus poin!");
+        }
+        
+        function toggleSound() {
+            soundOn = !soundOn;
+            document.getElementById("soundButton").textContent = `Suara: ${soundOn ? "ON" : "OFF"}`;
+        }
+        
+        function restartGame() {
+            gameOver = false;
+            paused = false;
+            score = 0;
+            level = 1;
+            lines = 0;
+            sentences = 0;
+            currentSentence = [];
+            dropInterval = 1000;
+            canHold = true;
+            holdPiece = null;
+            
+            document.getElementById("score").textContent = "0";
+            document.getElementById("level").textContent = "1";
+            document.getElementById("lines").textContent = "0";
+            document.getElementById("sentences").textContent = "0";
+            document.getElementById("gameOver").style.display = "none";
+            document.getElementById("pauseButton").textContent = "Jeda";
+            
+            createBoard();
+            nextPieces = [];
+            currentPiece = getNextPiece();
+            updateNextBlocks();
+            
+            displaySentence("合唱 比赛 开始", "Kompetisi paduan suara dimulai");
+            
+            lastTime = performance.now();
+            requestAnimationFrame(update);
+        }
+        
+        // Mulai game saat halaman dimuat
+        window.addEventListener("load", init);
+    </script>
+</body>
+</html>
